@@ -7,15 +7,27 @@ import {
   Text,
   Button, // <-- Import Button
 } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, MapPressEvent } from "react-native-maps";
 import * as Location from "expo-location";
 import { signOut } from "../lib/auth"; // <-- Import your signOut function
+import { createClient } from "@supabase/supabase-js";
 
 export default function MapScreen() {
   const [location, setLocation] = useState<Location.LocationObjectCoords | null>(
     null
   );
   const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    loadMarkers();
+  }, []);
+
+  //changing stuff
+  const supabase = createClient('https://dcaoifzkyecshfpfgjhk.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRjYW9pZnpreWVjc2hmcGZnamhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyMTUxMDEsImV4cCI6MjA3ODc5MTEwMX0.-kpLikBwm0yW1Z-2BKBwboMHeCyBQZ-YzsXo-PgjvOs');
+  //changing stuff
+  const [markers, setMarkers] = useState<any[]>([]);
+  const [addingMode, setAddingMode] = useState(false);
+  const defaultDesc = "I cried here."
+
 
   // Get user's current location
   useEffect(() => {
@@ -29,6 +41,7 @@ export default function MapScreen() {
       let current = await Location.getCurrentPositionAsync({});
       setLocation(current.coords);
       setLoading(false);
+
     })();
   }, []);
 
@@ -52,11 +65,63 @@ export default function MapScreen() {
     );
   }
 
+    //changing stuff
+  
+
+  async function loadMarkers() {
+    const { data, error } = await supabase.from("cry_spots").select("*");
+
+    if (error) {
+      console.log(error);
+      return;
+    }
+
+    setMarkers(data);
+  }
+
+  // Add marker to Supabase
+  async function addMarkerToDB(lat: number, lng: number, desc: string) {
+    const { data, error } = await supabase
+      .from("cry_locs")
+      .insert([{ latitude: lat, longitude: lng, description: desc }])
+      .select();
+
+    if (error) {
+      console.log(error);
+      alert("Error saving marker.");
+      return;
+    }
+
+    // Append new marker to state
+    setMarkers((prev) => [...prev, data[0]]);
+  }
+
+  // Handle map tap
+  function handleMapPress(e: MapPressEvent) {
+    if (!addingMode) return;
+
+    const { latitude, longitude } = e.nativeEvent.coordinate;
+    addMarkerToDB(latitude, longitude, defaultDesc);
+
+    setAddingMode(false);
+    alert("Cry spot added!");
+  }
+
+  if (loading || !location) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" />
+        <Text>Loading map…</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={{ flex: 1 }}>
       <MapView
         style={{ flex: 1 }}
         showsUserLocation={true}
+        onPress={handleMapPress}
         initialRegion={{
           latitude: location.latitude,
           longitude: location.longitude,
@@ -64,32 +129,36 @@ export default function MapScreen() {
           longitudeDelta: 0.01,
         }}
       >
-        {/* Example marker — you’ll replace these with Supabase data later */}
-        <Marker
-          coordinate={{
-            latitude: location.latitude + 0.0005,
-            longitude: location.longitude + 0.0005,
-          }}
-          title="Example Cry Spot"
-          description="This is where someone cried."
-        />
+        {markers.map((m) => (
+          <Marker
+            key={m.id}
+            coordinate={{ latitude: m.latitude, longitude: m.longitude }}
+            title="User's Cry Spot"
+            description={m.description}
+          />
+        ))}
       </MapView>
 
-      {/* Floating Add Button */}
+      {/* Add cry spot button */}
       <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => alert("Add cry spot screen coming soon!")}
+        style={[styles.addButton, addingMode && { backgroundColor: "#34C759" }]}
+        onPress={() => setAddingMode((prev) => !prev)}
       >
-        <Text style={styles.addButtonText}>+</Text>
+        <Text style={styles.addButtonText}>{addingMode ? "✔" : "+"}</Text>
       </TouchableOpacity>
 
-      {/* --- Sign Out Button --- */}
+      {addingMode && (
+        <View style={styles.addingBanner}>
+          <Text style={{ color: "white", fontWeight: "bold" }}>Tap anywhere on the map to add a cry spot</Text>
+        </View>
+      )}
+
       <View style={styles.signOutButtonContainer}>
         <Button title="Sign Out" onPress={handleSignOut} color="#ff0000" />
       </View>
-      {/* --------------------- */}
     </View>
   );
+
 }
 
 const styles = StyleSheet.create({
@@ -131,5 +200,13 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 2,
+  },
+  addingBanner: {
+    position: "absolute",
+    top: 50,
+    alignSelf: "center",
+    backgroundColor: "rgba(0,0,0,0.7)",
+    padding: 10,
+    borderRadius: 8,
   },
 });
