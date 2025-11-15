@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import { View, ActivityIndicator, StyleSheet, TouchableOpacity, Text } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
+import { createClient } from "@supabase/supabase-js";
+
+// --- Supabase setup ---
+const supabase = createClient('https://dcaoifzkyecshfpfgjhk.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRjYW9pZnpreWVjc2hmcGZnamhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyMTUxMDEsImV4cCI6MjA3ODc5MTEwMX0.-kpLikBwm0yW1Z-2BKBwboMHeCyBQZ-YzsXo-PgjvOs');
 
 export default function MapScreen() {
   const [location, setLocation] = useState<Location.LocationObjectCoords | null>(null);
