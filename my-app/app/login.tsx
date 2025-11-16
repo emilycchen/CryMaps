@@ -22,6 +22,7 @@ const COLORS = {
 };
 
 export default function LoginScreen() {
+  const [name, setName] = useState(""); // <-- ADD THIS
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
   const [error, setError] = useState("");
@@ -35,9 +36,9 @@ export default function LoginScreen() {
     setLoading(true);
     setError("");
     try {
-      await signUpWithEmail(email, pw);
+        await signUpWithEmail(email, pw, name);
     } catch (e: any) {
-      setError(e.message);
+        setError(e.message);
     }
     setLoading(false);
   }
@@ -79,6 +80,16 @@ export default function LoginScreen() {
     >
       <Text style={styles.title}>CryMaps</Text>
       <Text style={styles.subtitle}>Find and share your cry spots</Text>
+
+      <Text style={styles.subtitle}>Find and share your cry spots</Text>
+
+      <TextInput
+        placeholder="Your Name (optional)"
+        value={name}
+        onChangeText={setName}
+        style={styles.input}
+        autoCapitalize="words"
+      />
 
       <TextInput
         placeholder="email@address.com"
