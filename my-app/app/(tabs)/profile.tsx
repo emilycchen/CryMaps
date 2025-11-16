@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { useFonts, Zain_400Regular } from "@expo-google-fonts/zain";
 import * as ImagePicker from "expo-image-picker";
-import { supabase } from "../lib/supabase";
+import { supabase } from "../../lib/supabase";
 import * as FileSystem from "expo-file-system/legacy";
 import { decode } from "base64-arraybuffer";
 

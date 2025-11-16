@@ -79,7 +79,7 @@ export default function LoginScreen() {
 
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-      {/* Log In Button */}
+      {/* login button */}
       <TouchableOpacity
         style={[styles.button, styles.buttonPrimary]}
         onPress={handleLogin}
@@ -92,7 +92,7 @@ export default function LoginScreen() {
         )}
       </TouchableOpacity>
 
-      {/* Link to Sign Up */}
+      {/* link to signup */}
       <TouchableOpacity
         style={styles.linkButton}
         onPress={() => router.push("/signup")}

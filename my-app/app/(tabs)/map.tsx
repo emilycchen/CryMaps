@@ -10,10 +10,10 @@ import {
 } from "react-native";
 import MapView, { Marker, MapPressEvent, Callout } from "react-native-maps";
 import * as Location from "expo-location";
-import { signOut } from "../lib/auth";
-import { supabase } from "../lib/supabase"; // <-- IMPORT from lib
+import { signOut } from "../../lib/auth";
+import { supabase } from "../../lib/supabase";
 import { useFonts, Zain_400Regular } from "@expo-google-fonts/zain";
-import { COLORS } from "../lib/theme";
+import { COLORS } from "../../lib/theme";
 
 export default function MapScreen() {
   const [location, setLocation] = useState<Location.LocationObjectCoords | null>(
@@ -84,7 +84,6 @@ export default function MapScreen() {
       return;
     }
 
-    // 2. Insert the marker WITH the user_id
     const { data, error } = await supabase
       .from("cry_locs")
       .insert([
@@ -92,16 +91,15 @@ export default function MapScreen() {
           latitude: lat,
           longitude: lng,
           description: desc,
-          user_id: user.id, // <-- This is the new, important line
+          user_id: user.id,
         },
       ])
       .select(
-        // 3. Select the joined data right away to add to the map
         `*,
          users (name, profile_picture_url)
         `
       )
-      .single(); // We only inserted one, so get a single object back
+      .single();
 
     if (error) {
       console.log(error);
@@ -109,7 +107,6 @@ export default function MapScreen() {
       return;
     }
 
-    // Append new marker to state (it already has the 'users' object!)
     setMarkers((prev) => [...prev, data]);
   }
 
@@ -169,7 +166,7 @@ export default function MapScreen() {
                 key={m.id}
                 coordinate={{ latitude: m.latitude, longitude: m.longitude }}
             >
-                {/* This is our custom-styled pin */}
+                {/* custom styled pin */}
                 <View style={styles.pin}>
                 <View style={styles.pinInner} />
                 </View>
@@ -177,22 +174,14 @@ export default function MapScreen() {
                 <Callout>
                 <View style={styles.calloutContainer}>
                     <View style={styles.calloutHeader}>
-                    {/* NEW LOGIC:
-                        Use the profile_picture_url if it exists,
-                        otherwise use the default.png
-                    */}
                     <Image
                         source={
                         m.users && m.users.profile_picture_url
                             ? { uri: m.users.profile_picture_url }
-                            : require("../assets/images/default.png")
+                            : require("../../assets/images/default.png")
                         }
                         style={styles.profilePic}
                     />
-                    {/* NEW LOGIC:
-                        Use the user's name if it exists,
-                        otherwise use "Anonymous Cry"
-                    */}
                     <Text style={styles.calloutTitle}>
                         {m.users ? m.users.name : "Anonymous Cry"}
                     </Text>
@@ -266,7 +255,6 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   addButtonText: {
-    // color: COLORS.text,
     fontSize: 32,
     marginTop: -3,
   },

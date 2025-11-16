@@ -32,7 +32,6 @@ export default function SignUpScreen() {
     setError("");
     try {
       await signUpWithEmail(email, pw, name);
-      // AuthContext will handle redirect
     } catch (e: any) {
       setError(e.message);
     }
@@ -115,7 +114,6 @@ export default function SignUpScreen() {
   );
 }
 
-// STYLES (Same as login page)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
