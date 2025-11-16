@@ -10,13 +10,14 @@ import {
   ActivityIndicator,
   Image,
 } from "react-native";
-import { signInWithEmail } from "../lib/auth"; // Only import what's needed
+import { signUpWithEmail } from "../lib/auth";
 import { useFonts, Zain_400Regular } from "@expo-google-fonts/zain";
 import { COLORS } from "../lib/theme";
-import { useRouter } from "expo-router"; // Import useRouter
+import { useRouter } from "expo-router";
 
-export default function LoginScreen() {
-  const router = useRouter(); // For navigation
+export default function SignUpScreen() {
+  const router = useRouter();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
   const [error, setError] = useState("");
@@ -26,11 +27,12 @@ export default function LoginScreen() {
     Zain_400Regular,
   });
 
-  async function handleLogin() {
+  async function handleSignup() {
     setLoading(true);
     setError("");
     try {
-      await signInWithEmail(email, pw);
+      await signUpWithEmail(email, pw, name);
+      // AuthContext will handle redirect
     } catch (e: any) {
       setError(e.message);
     }
@@ -56,7 +58,16 @@ export default function LoginScreen() {
       />
 
       <Text style={styles.title}>CryMaps</Text>
-      <Text style={styles.subtitle}>Welcome back</Text>
+      <Text style={styles.subtitle}>Create your account</Text>
+
+      <TextInput
+        placeholder="Your Name (optional)"
+        value={name}
+        onChangeText={setName}
+        style={styles.input}
+        autoCapitalize="words"
+        placeholderTextColor={COLORS.placeholder}
+      />
 
       <TextInput
         placeholder="email@address.com"
@@ -79,32 +90,32 @@ export default function LoginScreen() {
 
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-      {/* Log In Button */}
       <TouchableOpacity
         style={[styles.button, styles.buttonPrimary]}
-        onPress={handleLogin}
+        onPress={handleSignup}
         disabled={loading}
       >
         {loading ? (
           <ActivityIndicator color={COLORS.text} />
         ) : (
-          <Text style={styles.buttonTextPrimary}>Log In</Text>
+          <Text style={styles.buttonTextPrimary}>Sign Up</Text>
         )}
       </TouchableOpacity>
 
-      {/* Link to Sign Up */}
+      {/* Link to Log In */}
       <TouchableOpacity
         style={styles.linkButton}
-        onPress={() => router.push("/signup")}
+        onPress={() => router.push("/login")}
       >
         <Text style={styles.linkButtonText}>
-          Don&apos;t have an account? <Text style={{fontWeight: 'bold'}}>Sign up</Text>
+          Already have an account? <Text style={{fontWeight: 'bold'}}>Log in</Text>
         </Text>
       </TouchableOpacity>
     </KeyboardAvoidingView>
   );
 }
 
+// STYLES (Same as login page)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -134,7 +145,6 @@ const styles = StyleSheet.create({
   input: {
     height: 50,
     backgroundColor: COLORS.white,
-    color: '#000000ff',
     borderColor: COLORS.border,
     borderWidth: 1,
     borderRadius: 8,

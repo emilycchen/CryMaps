@@ -13,17 +13,7 @@ import * as Location from "expo-location";
 import { signOut } from "../lib/auth";
 import { supabase } from "../lib/supabase"; // <-- IMPORT from lib
 import { useFonts, Zain_400Regular } from "@expo-google-fonts/zain";
-
-const COLORS = {
-  primary: "#A0C4E2",
-  accent: "#80C6C1",
-  active: "#334E68",
-  background: "#F7F9FA",
-  border: "#DDE3E8",
-  text: "#334E68",
-  white: "#FFFFFF",
-  red: "#E53E3E",
-};
+import { COLORS } from "../lib/theme";
 
 export default function MapScreen() {
   const [location, setLocation] = useState<Location.LocationObjectCoords | null>(

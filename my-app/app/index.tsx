@@ -4,14 +4,7 @@ import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import React, {useState} from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFonts, Zain_400Regular } from "@expo-google-fonts/zain";
-
-const COLORS = {
-  primary: "#A0C4E2",
-  background: "#F7F9FA",
-  border: "#DDE3E8",
-  text: "#334E68",
-  white: "#FFFFFF",
-};
+import { COLORS } from "../lib/theme";
 
 export default function Index() {
   const [fontsLoaded] = useFonts({ Zain_400Regular });
