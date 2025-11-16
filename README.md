@@ -38,7 +38,7 @@ crymaps/
 │   ├── (tabs)/          # Main tab navigator screens
 │   │   ├── _layout.tsx  # Tab bar configuration
 │   │   ├── map.tsx      # The main map screen
-│   │   ├── feed.tsx     # (Coming Soon) Activity feed
+│   │   ├── feed.tsx     # Activity feed
 │   │   └── profile.tsx  # User profile screen
 │   ├── _layout.tsx      # Root stack navigator & Auth protection
 │   ├── index.tsx        # Redirects to /(tabs)/map
