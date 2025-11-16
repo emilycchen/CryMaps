@@ -1,6 +1,7 @@
 import MapScreen from "./map";
+import ProfileScreen from "./profile"
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
-import React from "react";
+import React, {useState} from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFonts, Zain_400Regular } from "@expo-google-fonts/zain";
 
@@ -13,50 +14,54 @@ const COLORS = {
 };
 
 export default function Index() {
-  const [fontsLoaded] = useFonts({
-    Zain_400Regular,
-  });
+  const [fontsLoaded] = useFonts({ Zain_400Regular });
+  const [currentScreen, setCurrentScreen] = useState<"map" | "feed" | "profile">("map");
 
-  const onNavPress = (item: string) => {
-    console.log("Pressed:", item);
-    // add nav logic laterz
+  const onNavPress = (item: "map" | "feed" | "profile") => {
+    setCurrentScreen(item);
   };
 
-  if (!fontsLoaded) {
-    return null;
-  }
+  if (!fontsLoaded) return null;
+
+  const renderScreen = () => {
+    switch (currentScreen) {
+      case "feed":
+        return <FeedScreen />;
+      case "profile":
+        return <ProfileScreen />;
+      default:
+        return <MapScreen />;
+    }
+  };
 
   return (
     <View style={styles.safe}>
       <SafeAreaView style={styles.safeContent} edges={["top"]}>
         <Text style={styles.title}>CryMaps</Text>
-        <View style={styles.menu}>
-          <MapScreen />
-        </View>
+        <View style={styles.menu}>{renderScreen()}</View>
       </SafeAreaView>
 
       <View style={styles.navbar}>
-        <TouchableOpacity
-          onPress={() => onNavPress("map")}
-          style={styles.navItem}
-        >
+        <TouchableOpacity onPress={() => onNavPress("map")} style={styles.navItem}>
           <Text style={styles.navText}>Map</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() => onNavPress("feed")}
-          style={styles.navItem}
-        >
+        <TouchableOpacity onPress={() => onNavPress("feed")} style={styles.navItem}>
           <Text style={styles.navText}>Feed</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() => onNavPress("profile")}
-          style={styles.navItem}
-        >
+        <TouchableOpacity onPress={() => onNavPress("profile")} style={styles.navItem}>
           <Text style={styles.navText}>Profile</Text>
         </TouchableOpacity>
       </View>
+    </View>
+  );
+}
+
+function FeedScreen() {
+  return (
+    <View style={{ padding: 20 }}>
+      <Text style={{ fontSize: 20 }}>Feed Screen</Text>
     </View>
   );
 }
@@ -83,7 +88,6 @@ const styles = StyleSheet.create({
   menu: {
     flex: 1,
     marginTop: 10,
-    borderRadius: 20,
     width: "100%",
     overflow: "hidden",
   },

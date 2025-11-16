@@ -80,9 +80,6 @@ export default function LoginScreen() {
     >
       <Text style={styles.title}>CryMaps</Text>
       <Text style={styles.subtitle}>Find and share your cry spots</Text>
-
-      <Text style={styles.subtitle}>Find and share your cry spots</Text>
-
       <TextInput
         placeholder="Your Name (optional)"
         value={name}
@@ -164,6 +161,7 @@ const styles = StyleSheet.create({
   input: {
     height: 50,
     backgroundColor: COLORS.white,
+    color: '#000000ff',
     borderColor: COLORS.border,
     borderWidth: 1,
     borderRadius: 8,
